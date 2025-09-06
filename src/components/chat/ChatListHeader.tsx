@@ -27,11 +27,11 @@ export const ChatListHeader: React.FC<ChatListHeaderProps> = ({
       {/* New Chat Button - centered on small screens */}
       <button 
         onClick={onNewChatClick}
-        className="group cursor-pointer transition-all duration-200 text-white hover:text-white hover:bg-green-600 rounded-xl bg-green-500 font-medium shadow-sm hover:shadow-md flex-shrink-0 
+        className="group transition-all duration-200 text-white hover:text-white hover:bg-green-600 rounded-xl bg-green-500 font-medium shadow-sm hover:shadow-md flex-shrink-0 
         w-10 h-10 lg:w-auto lg:h-auto lg:px-4 lg:py-2 
         flex items-center justify-center lg:justify-start
         text-xs lg:text-sm
-        mx-auto lg:mx-0 lg:ml-2"
+        mx-auto lg:mx-0 lg:ml-2 cursor-pointer"
         title="New Chat"
       >
         <Plus className="w-4 h-4 lg:mr-1" />

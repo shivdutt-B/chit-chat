@@ -66,7 +66,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
         <div className="flex space-x-2 flex-shrink-0 py-2 flex-wrap">
           <div className="flex space-x-2 overflow-x-auto scrollbar-hide pb-2">
             <button
-              className="flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors duration-200 whitespace-nowrap"
+              className="flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors duration-200 whitespace-nowrap cursor-pointer"
               onClick={() => setShowSummary(true)}
             >
               <MessageSquare className="w-4 h-4 mr-2 text-white" />
@@ -76,7 +76,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
 
           <div className="flex space-x-2 overflow-x-auto scrollbar-hide pb-2 smart-replies-container">
             <button
-              className="flex items-center px-3 py-2 text-sm font-medium text-gray-800 bg-yellow-400 hover:bg-yellow-500 rounded-lg transition-colors duration-200 whitespace-nowrap"
+              className="flex items-center px-3 py-2 text-sm font-medium text-gray-800 bg-yellow-400 hover:bg-yellow-500 rounded-lg transition-colors duration-200 whitespace-nowrap cursor-pointer"
               onClick={handleSmartReply}
             >
               <Star className="w-4 h-4 mr-2 text-gray-800" />

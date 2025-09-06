@@ -1,27 +1,32 @@
-import { useState, useCallback, useEffect } from 'react';
-import { useNavigate, useParams, Navigate, Routes, Route } from 'react-router-dom';
-import { ChatList } from '../components/chat/ChatList';
-import { ChatWindow } from '../components/chat/ChatWindow';
-import { NewChat } from '../components/chat/NewChat';
-import { mockChats, mockMessages } from '../data/mockData';
-import type { Message } from '../types';
-
+import { useState, useCallback, useEffect } from "react";
+import {
+  useNavigate,
+  useParams,
+  Navigate,
+  Routes,
+  Route,
+} from "react-router-dom";
+import { ChatList } from "../components/chat/ChatList";
+import { ChatWindow } from "../components/chat/ChatWindow";
+import { mockChats, mockMessages } from "../data/mockData";
+import type { Message } from "../types";
+import { MessageSquare } from "lucide-react";
 // Component to handle chat window with route params
-function ChatWindowWrapper({ 
-  messages, 
-  onSendMessage, 
+function ChatWindowWrapper({
+  messages,
+  onSendMessage,
   chats,
-  onBackToChats
-}: { 
+  onBackToChats,
+}: {
   messages: Record<string, Message[]>;
   onSendMessage: (chatId: string, content: string) => void;
   chats: typeof mockChats;
   onBackToChats: () => void;
 }) {
   const { id } = useParams<{ id: string }>();
-  const chatId = id || '';
-  const chat = chats.find(c => c.id === chatId);
-  
+  const chatId = id || "";
+  const chat = chats.find((c) => c.id === chatId);
+
   if (!chat) {
     return <Navigate to="/" replace />;
   }
@@ -38,7 +43,8 @@ function ChatWindowWrapper({
 }
 
 function Home() {
-  const [messages, setMessages] = useState<Record<string, Message[]>>(mockMessages);
+  const [messages, setMessages] =
+    useState<Record<string, Message[]>>(mockMessages);
   const [chats, setChats] = useState(mockChats);
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
@@ -58,7 +64,7 @@ function Home() {
   const handleSendMessage = (chatId: string, content: string) => {
     const newMessage: Message = {
       id: Date.now().toString(),
-      sender: 'You',
+      sender: "You",
       content,
       timestamp: new Date().toISOString(),
       isOwn: true,
@@ -73,42 +79,51 @@ function Home() {
     setChats((prevChats) =>
       prevChats.map((chat) =>
         chat.id === chatId
-          ? { ...chat, lastMessage: content, timestamp: new Date().toISOString() }
+          ? {
+              ...chat,
+              lastMessage: content,
+              timestamp: new Date().toISOString(),
+            }
           : chat
       )
     );
   };
 
-  const handleStartNewChat = useCallback((participant: string, initialMessage?: string) => {
-    const newChatId = Date.now().toString();
-    const newChat = {
-      id: newChatId,
-      name: participant,
-      lastMessage: initialMessage || 'New conversation started',
-      timestamp: new Date().toISOString(),
-      avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(participant)}&background=random`,
-      isGroup: false,
-    };
-
-    setChats((prev) => [newChat, ...prev]);
-
-    if (initialMessage) {
-      const newMessage: Message = {
-        id: Date.now().toString(),
-        sender: 'You',
-        content: initialMessage,
+  const handleStartNewChat = useCallback(
+    (participant: string, initialMessage?: string) => {
+      const newChatId = Date.now().toString();
+      const newChat = {
+        id: newChatId,
+        name: participant,
+        lastMessage: initialMessage || "New conversation started",
         timestamp: new Date().toISOString(),
-        isOwn: true,
+        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(
+          participant
+        )}&background=random`,
+        isGroup: false,
       };
 
-      setMessages((prev) => ({
-        ...prev,
-        [newChatId]: [newMessage],
-      }));
-    }
+      setChats((prev) => [newChat, ...prev]);
 
-    navigate(`/chat/${newChatId}`);
-  }, [navigate, setChats, setMessages]);
+      if (initialMessage) {
+        const newMessage: Message = {
+          id: Date.now().toString(),
+          sender: "You",
+          content: initialMessage,
+          timestamp: new Date().toISOString(),
+          isOwn: true,
+        };
+
+        setMessages((prev) => ({
+          ...prev,
+          [newChatId]: [newMessage],
+        }));
+      }
+
+      navigate(`/chat/${newChatId}`);
+    },
+    [navigate, setChats, setMessages]
+  );
 
   return (
     <div className="flex min-h-screen bg-background">
@@ -121,7 +136,7 @@ function Home() {
           onStartNewChat={handleStartNewChat}
         />
       </aside>
-      
+
       {/* Main Chat Area */}
       <main className="flex-1 overflow-hidden">
         <Routes>
@@ -132,29 +147,53 @@ function Home() {
                 messages={messages}
                 onSendMessage={handleSendMessage}
                 chats={chats}
-                onBackToChats={() => navigate('/')}
+                onBackToChats={() => navigate("/")}
               />
             }
           />
+
           <Route
-            path="new"
-            element={<NewChat onStartChat={handleStartNewChat} onBackToChats={() => navigate('/')} />}
-          />
-          <Route 
-            path="/" 
+            path="/"
             element={
-              <div className="flex items-center justify-center h-full text-muted-foreground p-4">
-                <div className="text-center">
-                  <div className="text-lg md:text-xl font-medium mb-2">
-                    Welcome to Chat
+              <div className="flex items-center justify-center h-full bg-gray-50 text-gray-700 p-6 bg-background">
+                <div className="text-center max-w-md">
+                  {/* Illustration / Icon */}
+                  <div className="mb-6 flex justify-center">
+                    <div className="w-24 h-24 bg-gradient-to-tr from-blue-500 to-green-500 rounded-full flex items-center justify-center shadow-lg">
+                      <MessageSquare className="w-12 h-12 text-white" />
+                    </div>
                   </div>
-                  <div className="text-sm md:text-base">
-                    <span className="md:hidden">Tap a profile to start chatting</span>
-                    <span className="hidden md:inline">Select a chat or start a new one</span>
+
+                  {/* Title */}
+                  <h1 className="text-2xl font-bold text-gray-800 mb-3">
+                    Welcome to Smart Team Chat 🚀
+                  </h1>
+
+                  {/* Subtitle */}
+                  <p className="text-sm md:text-base text-gray-500 mb-6 leading-relaxed">
+                    Start a conversation with your teammates and let AI make
+                    your chats smarter.
+                    <br />
+                    Use{" "}
+                    <span className="font-medium text-blue-600">
+                      Summarize
+                    </span>{" "}
+                    to quickly catch up, or try{" "}
+                    <span className="font-medium text-yellow-600">
+                      Smart Reply
+                    </span>{" "}
+                    for instant suggestions.
+                  </p>
+
+                  {/* Call-to-action */}
+                  <div className="flex justify-center space-x-3">
+                    <button className="cursor-pointer px-5 py-2 bg-gray-200 text-gray-700 rounded-lg shadow hover:bg-gray-300 transition-colors duration-200">
+                      📂 View Chats
+                    </button>
                   </div>
                 </div>
               </div>
-            } 
+            }
           />
         </Routes>
       </main>

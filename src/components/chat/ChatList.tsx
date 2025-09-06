@@ -8,7 +8,6 @@ import { NewChatModal } from "./NewChatModal"
 import { ChatListHeader } from "./ChatListHeader"
 import { SearchBar } from "./SearchBar"
 import { ChatListItem } from "./ChatListItem"
-import { EmptyState } from "./EmptyState"
 
 interface ChatListProps {
   chats: Chat[]
@@ -70,7 +69,8 @@ export const ChatList: React.FC<ChatListProps> = ({
       {/* Chat List */}
       <div className="flex-1 overflow-y-auto scrollbar-thin">
         <div className="py-1 md:py-2 bg-[#f5f5f75d] px-0 md:px-1 rounded-xl m-0 md:m-1">
-          {filteredChats.length > 0 ? (
+          {
+          // filteredChats.length > 0 ? (
             filteredChats.map((chat) => (
               <ChatListItem
                 key={chat.id}
@@ -80,11 +80,12 @@ export const ChatList: React.FC<ChatListProps> = ({
                 searchQuery={searchQuery}
               />
             ))
-          ) : (
-            <div className="hidden md:block">
-              <EmptyState searchQuery={searchQuery} />
-            </div>
-          )}
+          // ) : (
+          //   <div className="hidden md:block">
+          //     <EmptyState searchQuery={searchQuery} />
+          //   </div>
+          // )
+          }
         </div>
       </div>
 

@@ -141,7 +141,7 @@ export const NewChatModal: React.FC<NewChatModalProps> = ({
         </div>
         
         <button
-          className={`w-full flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-medium transition-all duration-200 ${
+          className={`w-full flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-medium transition-all duration-200 cursor-pointer ${
             participant.trim()
               ? "bg-blue-500 text-white hover:bg-blue-600 shadow-sm"
               : "bg-gray-200 text-gray-400 cursor-not-allowed"
@@ -155,7 +155,7 @@ export const NewChatModal: React.FC<NewChatModalProps> = ({
         
         {/* Skip Ice Breaker Button */}
         <button
-          className={`w-full flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-medium transition-all duration-200 border ${
+          className={`w-full flex items-center justify-center gap-2 px-6 py-3 rounded-lg cursor-pointer font-medium transition-all duration-200 border ${
             participant.trim()
               ? "border-gray-300 text-gray-700 hover:bg-gray-50"
               : "border-gray-200 text-gray-400 cursor-not-allowed"
@@ -190,7 +190,7 @@ export const NewChatModal: React.FC<NewChatModalProps> = ({
         className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium transition-all duration-200 shadow-sm ${
           isGenerating 
             ? 'bg-gray-400 cursor-not-allowed' 
-            : 'bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600'
+            : 'bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600 cursor-pointer'
         }`}
         onClick={handleGenerateIcebreaker}
         disabled={isGenerating}
@@ -309,14 +309,14 @@ export const NewChatModal: React.FC<NewChatModalProps> = ({
       {/* Navigation Buttons */}
       <div className="flex gap-3">
         <button
-          className="flex-1 flex items-center justify-center gap-2 px-4 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-all duration-200"
+          className="flex-1 flex items-center justify-center gap-2 px-4 py-3 border border-gray-300 cursor-pointer rounded-lg text-gray-700 hover:bg-gray-50 transition-all duration-200"
           onClick={handlePreviousStep}
         >
           <ArrowLeft className="w-4 h-4" />
           Back
         </button>
         <button
-          className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium transition-all duration-200 ${
+          className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium transition-all duration-200 cursor-pointer ${
             selectedMessage
               ? "bg-blue-500 text-white hover:bg-blue-600"
               : "bg-gray-200 text-gray-400 cursor-not-allowed"
@@ -332,7 +332,7 @@ export const NewChatModal: React.FC<NewChatModalProps> = ({
       {/* Skip Ice Breaker Option */}
       <div className="pt-4 border-t border-gray-200">
         <button
-          className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium transition-all duration-200 border border-gray-300 text-gray-700 hover:bg-gray-50"
+          className="w-full flex items-center cursor-pointer justify-center gap-2 px-4 py-3 rounded-lg font-medium transition-all duration-200 border border-gray-300 text-gray-700 hover:bg-gray-50"
           onClick={() => {
             onStartChat(participant.trim())
             handleClose()
@@ -374,14 +374,14 @@ export const NewChatModal: React.FC<NewChatModalProps> = ({
       {/* Navigation Buttons */}
       <div className="flex gap-3">
         <button
-          className="flex-1 flex items-center justify-center gap-2 px-4 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-all duration-200"
+          className="flex-1 flex items-center justify-center gap-2 px-4 py-3 border border-gray-300 rounded-lg cursor-pointer text-gray-700 hover:bg-gray-50 transition-all duration-200"
           onClick={handlePreviousStep}
         >
           <ArrowLeft className="w-4 h-4" />
           Back
         </button>
         <button
-          className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-green-500 text-white rounded-lg font-medium hover:bg-green-600 transition-all duration-200 shadow-sm"
+          className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-green-500 text-white rounded-lg font-medium hover:bg-green-600 transition-all duration-200 shadow-sm cursor-pointer"
           onClick={handleStartChat}
         >
           <UserPlus className="w-4 h-4" />
