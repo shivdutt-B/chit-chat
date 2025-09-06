@@ -1,9 +1,11 @@
 "use client"
 
 import type React from "react"
+import { useState } from "react"
 import { format, isToday, isYesterday } from "date-fns"
 import { Search, Plus, Users } from "lucide-react"
 import type { Chat } from "../../types"
+import { NewChatModal } from "./NewChatModal"
 
 interface ChatListItemProps {
   chat: Chat
@@ -108,9 +110,19 @@ interface ChatListProps {
   chats: Chat[]
   activeChat?: string
   onChatSelect: (chatId: string) => void
+  onStartNewChat: (participant: string, message?: string) => void
 }
 
-export const ChatList: React.FC<ChatListProps> = ({ chats, activeChat, onChatSelect }) => {
+export const ChatList: React.FC<ChatListProps> = ({ 
+  chats, 
+  activeChat, 
+  onChatSelect, 
+  onStartNewChat 
+}) => {
+  const [isNewChatModalOpen, setIsNewChatModalOpen] = useState(false)
+
+  console.log('ChatList props:', { onStartNewChat: typeof onStartNewChat })
+
   return (
     <div className="flex flex-col h-screen bg-sidebar">
       {/* Header */}
@@ -120,8 +132,12 @@ export const ChatList: React.FC<ChatListProps> = ({ chats, activeChat, onChatSel
             <h1 className="text-2xl font-bold text-sidebar-primary-foreground font-heading">Messages</h1>
             <p className="text-sm text-muted-foreground mt-1">{chats.length} conversations</p>
           </div>
-          <button className="group px-4 cursor-pointer py-2 text-muted-foreground hover:text-accent hover:bg-accent/10 rounded-xl transition-all duration-200 w-auto text-sm bg-green-500">
-            Add <Plus className="w-5 h-5 inline" />
+          <button 
+            onClick={() => setIsNewChatModalOpen(true)}
+            className="group px-4 cursor-pointer py-2 text-white hover:text-white hover:bg-green-600 rounded-xl transition-all duration-200 w-auto text-sm bg-green-500 font-medium shadow-sm hover:shadow-md"
+          >
+            <Plus className="w-4 h-4 inline mr-1" />
+            New Chat
           </button>
         </div>
 
@@ -151,6 +167,13 @@ export const ChatList: React.FC<ChatListProps> = ({ chats, activeChat, onChatSel
           ))}
         </div>
       </div>
+
+      {/* New Chat Modal */}
+      <NewChatModal
+        isOpen={isNewChatModalOpen}
+        onClose={() => setIsNewChatModalOpen(false)}
+        onStartChat={onStartNewChat}
+      />
     </div>
   )
 }

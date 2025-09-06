@@ -140,31 +140,32 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
 
       {/* Input Container */}
       <div className="flex-shrink-0 px-6 py-4 bg-gray-50 m-1 rounded-lg">
-        <div className="flex space-x-2 flex-shrink-0 px-6 py-2">
-          <div className="flex space-x-2 overflow-x-auto scrollbar-hide pb-2">
-            <button
-              className="flex items-center px-3 py-2 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors duration-200"
-              onClick={() => setShowSummary(true)}
-            >
-              <MessageSquare className="w-4 h-4 mr-2" />
-              Summarize
-            </button>
-          </div>
+        <div className="flex space-x-2 flex-shrink-0  py-2">
+  <div className="flex space-x-2 overflow-x-auto scrollbar-hide pb-2">
+    <button
+      className="flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors duration-200"
+      onClick={() => setShowSummary(true)}
+    >
+      <MessageSquare className="w-4 h-4 mr-2 text-white" />
+      Summarize
+    </button>
+  </div>
 
-          <div className="flex space-x-2 overflow-x-auto scrollbar-hide pb-2">
-            <button
-              className="flex items-center px-3 py-2 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors duration-200"
-              onClick={() => setShowSummary(true)}
-            >
-              <Star className="w-4 h-4 mr-2" />
-              Smart Reply
-            </button>
-          </div>
-        </div>
+  <div className="flex space-x-2 overflow-x-auto scrollbar-hide pb-2">
+    <button
+      className="flex items-center px-3 py-2 text-sm font-medium text-gray-800 bg-yellow-400 hover:bg-yellow-500 rounded-lg transition-colors duration-200"
+      onClick={() => setShowSummary(true)}
+    >
+      <Star className="w-4 h-4 mr-2 text-gray-800" />
+      Smart Reply
+    </button>
+  </div>
+</div>
+
         <div className="flex space-x-3 items-center">
-          <button className="p-2 text-gray-400 hover:text-primary-500 transition-colors duration-200">
+          {/* <button className="p-2 text-gray-400 hover:text-primary-500 transition-colors duration-200">
             <Paperclip className="w-5 h-5" />
-          </button>
+          </button> */}
 
           <div className="flex-1 relative">
             <textarea
@@ -175,7 +176,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
               className="w-full px-4 py-3 pr-12 text-sm bg-gray-50 border border-gray-200 rounded-2xl resize-none focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 min-h-[44px] max-h-32"
               rows={1}
             />
-            <button className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 text-gray-400 hover:text-primary-500 transition-colors duration-200">
+            <button className="absolute right-3 top-[9px] transform p-1 text-gray-400 hover:text-primary-500 transition-colors duration-200">
               <Smile className="w-5 h-5" />
             </button>
           </div>
@@ -185,8 +186,8 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
             disabled={!newMessage.trim()}
             className={`p-3 rounded-full transition-all duration-200 ${
               newMessage.trim()
-                ? "bg-accent text-accent-foreground hover:bg-accent/90 shadow-lg"
-                : "bg-muted text-muted-foreground cursor-not-allowed"
+                ? "bg-accent text-accent-foreground hover:bg-accent/90"
+                : "bg-muted text-muted-foreground cursor-not-allowed text-gray-400"
             }`}
           >
             <Send className="w-5 h-5" />

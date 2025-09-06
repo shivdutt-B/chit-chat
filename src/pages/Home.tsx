@@ -69,6 +69,7 @@ function Home() {
   };
 
   const handleStartNewChat = (participant: string, initialMessage?: string) => {
+    console.log("handleStartNewChat called with:", participant, initialMessage)
     const newChatId = Date.now().toString();
     const newChat = {
       id: newChatId,
@@ -99,6 +100,8 @@ function Home() {
     navigate(`/chat/${newChatId}`);
   };
 
+  console.log("Home component handleStartNewChat:", typeof handleStartNewChat)
+
   return (
     <div className="grid grid-cols-[350px_1fr] min-h-screen bg-background">
       <aside className="">
@@ -106,6 +109,7 @@ function Home() {
           chats={chats}
           activeChat={id}
           onChatSelect={handleChatSelect}
+          onStartNewChat={handleStartNewChat}
         />
       </aside>
       <main className="overflow-hidden">
