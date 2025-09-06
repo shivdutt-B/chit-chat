@@ -92,6 +92,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
       <SummaryModal
         isVisible={showSummary}
         chatName={chatName}
+        messages={messages}
         onClose={() => setShowSummary(false)}
       />
     </div>

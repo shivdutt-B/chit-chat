@@ -1,24 +1,67 @@
-import React from 'react';
-import { format } from 'date-fns';
-import { MessageSquare, X } from 'lucide-react';
-import { mockThreadSummary } from '../../data/mockData';
+import React, { useState, useEffect } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import { MessageSquare, X, Loader2, Copy, RefreshCw } from 'lucide-react';
+import { generateConversationSummary } from '../../utils/geminiApi';
+import type { Message } from '../../types';
 
 interface SummaryModalProps {
   isVisible: boolean;
   chatName: string;
+  messages: Message[];
   onClose: () => void;
 }
 
 export const SummaryModal: React.FC<SummaryModalProps> = ({
   isVisible,
   chatName,
+  messages,
   onClose,
 }) => {
-  if (!isVisible) return null;
+  const [summary, setSummary] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [copySuccess, setCopySuccess] = useState<boolean>(false);
 
-  const copySummary = () => {
-    navigator.clipboard.writeText(mockThreadSummary);
+  useEffect(() => {
+    if (isVisible && messages.length > 0) {
+      generateSummary();
+    }
+  }, [isVisible, messages, chatName]);
+
+  const generateSummary = async () => {
+    if (messages.length === 0) {
+      setSummary('No messages to summarize.');
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const generatedSummary = await generateConversationSummary(messages, chatName);
+      setSummary(generatedSummary);
+    } catch (err) {
+      setError('Failed to generate summary. Please try again.');
+      setSummary('');
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  const copySummary = async () => {
+    if (summary) {
+      try {
+        await navigator.clipboard.writeText(summary);
+        setCopySuccess(true);
+        setTimeout(() => setCopySuccess(false), 2000);
+      } catch (err) {
+        console.error('Failed to copy summary:', err);
+      }
+    }
+  };
+
+  if (!isVisible) return null;
 
   return (
     <>
@@ -58,42 +101,100 @@ export const SummaryModal: React.FC<SummaryModalProps> = ({
           {/* Modal Content */}
           <div className="px-6 py-6 overflow-y-auto max-h-[60vh]">
             <div className="prose prose-sm max-w-none">
-              <div className="text-gray-700 leading-relaxed">
-                {typeof mockThreadSummary === 'string' ? (
-                  mockThreadSummary.split('\n').map((paragraph, index) => (
-                    paragraph.trim() ? (
-                      <p key={index} className="mb-4 last:mb-0">
-                        {paragraph.trim()}
-                      </p>
-                    ) : null
-                  ))
-                ) : (
-                  <div className="text-gray-500 italic text-center py-8">
-                    No summary available for this conversation.
+              {isLoading ? (
+                <div className="flex flex-col items-center justify-center py-12">
+                  <Loader2 className="w-8 h-8 text-blue-500 animate-spin mb-3" />
+                  <span className="text-gray-600 font-medium">Generating AI summary...</span>
+                  <span className="text-gray-400 text-sm mt-1">Analyzing {messages.length} messages</span>
+                </div>
+              ) : error ? (
+                <div className="text-center py-8">
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+                    <p className="text-red-600 font-medium mb-4">{error}</p>
+                    <button 
+                      onClick={generateSummary}
+                      className="inline-flex items-center px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors duration-200"
+                    >
+                      <RefreshCw className="w-4 h-4 mr-2" />
+                      Try Again
+                    </button>
                   </div>
-                )}
-              </div>
+                </div>
+              ) : summary ? (
+                <div className="prose prose-sm max-w-none">
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    components={{
+                      h1: ({children}) => <h1 className="text-2xl font-bold text-gray-900 mb-4 mt-6 first:mt-0 border-b border-gray-200 pb-2">{children}</h1>,
+                      h2: ({children}) => <h2 className="text-xl font-semibold text-blue-700 mb-3 mt-5 first:mt-0">{children}</h2>,
+                      h3: ({children}) => <h3 className="text-lg font-medium text-gray-800 mb-2 mt-4 first:mt-0">{children}</h3>,
+                      p: ({children}) => <p className="text-gray-700 mb-3 leading-relaxed">{children}</p>,
+                      ul: ({children}) => <ul className="list-none text-gray-700 mb-4 space-y-2 pl-0">{children}</ul>,
+                      ol: ({children}) => <ol className="list-decimal text-gray-700 mb-4 space-y-2 pl-6 marker:text-blue-500 marker:font-semibold">{children}</ol>,
+                      li: ({children}) => {
+                        return (
+                          <li className="text-gray-700 relative pl-6 before:content-['•'] before:absolute before:left-0 before:text-blue-500 before:font-bold before:text-lg">
+                            {children}
+                          </li>
+                        );
+                      },
+                      strong: ({children}) => <strong className="font-semibold text-gray-900">{children}</strong>,
+                      em: ({children}) => <em className="italic text-gray-800">{children}</em>,
+                      code: ({children}) => <code className="bg-gray-100 px-2 py-1 rounded text-sm font-mono text-gray-800">{children}</code>,
+                      pre: ({children}) => <pre className="bg-gray-100 p-4 rounded-lg overflow-x-auto mb-4 border border-gray-200">{children}</pre>,
+                      blockquote: ({children}) => <blockquote className="border-l-4 border-blue-300 pl-4 italic text-gray-600 my-4 bg-blue-50 py-2 rounded-r-lg">{children}</blockquote>,
+                      hr: () => <hr className="border-gray-300 my-6" />,
+                      table: ({children}) => <table className="min-w-full border-collapse border border-gray-300 mb-4">{children}</table>,
+                      thead: ({children}) => <thead className="bg-gray-50">{children}</thead>,
+                      th: ({children}) => <th className="border border-gray-300 px-4 py-2 text-left font-semibold">{children}</th>,
+                      td: ({children}) => <td className="border border-gray-300 px-4 py-2">{children}</td>,
+                    }}
+                  >
+                    {summary}
+                  </ReactMarkdown>
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
+                    <MessageSquare className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                    <p className="text-gray-500 italic">No messages to summarize.</p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
           
           {/* Modal Footer */}
           <div className="px-6 py-4 border-t border-gray-200 bg-gray-50 flex justify-between items-center">
-            <div className="text-xs text-gray-500">
-              Summary generated on {format(new Date(), 'MMM dd, yyyy')}
+            <div className="flex items-center text-xs text-gray-500">
+              {/* <span>Summary generated on {format(new Date(), 'MMM dd, yyyy')}</span> */}
+              {messages.length > 0 && (
+                <span className="ml-2">• {messages.length} messages analyzed</span>
+              )}
             </div>
             <div className="flex space-x-3">
-              <button
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors duration-200"
-                onClick={onClose}
-              >
-                Close
-              </button>
-              <button
-                className="px-4 py-2 text-sm font-medium text-white bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors duration-200"
-                onClick={copySummary}
-              >
-                Copy Summary
-              </button>
+              {!isLoading && summary && (
+                <button
+                  className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors duration-200"
+                  onClick={generateSummary}
+                >
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                  Refresh
+                </button>
+              )}
+              {summary && !isLoading && (
+                <button
+                  className={`inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 ${
+                    copySuccess 
+                      ? 'text-green-600 bg-green-100' 
+                      : 'text-white bg-blue-500 hover:bg-blue-600'
+                  }`}
+                  onClick={copySummary}
+                >
+                  <Copy className="w-4 h-4 mr-2" />
+                  {copySuccess ? 'Copied!' : 'Copy Summary'}
+                </button>
+              )}
             </div>
           </div>
         </div>
