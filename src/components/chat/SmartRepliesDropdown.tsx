@@ -54,19 +54,19 @@ export const SmartRepliesDropdown: React.FC<SmartRepliesDropdownProps> = ({
   if (!isVisible) return null;
 
   return (
-    <div className="absolute bottom-20 left-6 right-6 bg-white rounded-xl shadow-lg border border-gray-200 z-40 max-w-md smart-replies-container">
-      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-gray-50 rounded-t-xl">
-        <h3 className="text-sm font-semibold text-gray-900 flex items-center">
-          <Star className="w-4 h-4 mr-2 text-yellow-500" />
-          {headerTitle}
+    <div className="absolute bottom-16 md:bottom-20 left-2 right-2 md:left-6 md:right-6 bg-white rounded-lg md:rounded-xl shadow-lg border border-gray-200 z-40 max-w-sm md:max-w-md smart-replies-container">
+      <div className="flex items-center justify-between px-3 md:px-4 py-2 md:py-3 border-b border-gray-200 bg-gray-50 rounded-t-lg md:rounded-t-xl">
+        <h3 className="text-xs md:text-sm font-semibold text-gray-900 flex items-center truncate">
+          <Star className="w-3 h-3 md:w-4 md:h-4 mr-2 text-yellow-500 flex-shrink-0" />
+          <span className="truncate">{headerTitle}</span>
           {!isLoading && !error && (
-            <span className="ml-2 text-xs text-gray-500">• {headerSubtitle}</span>
+            <span className="ml-1 md:ml-2 text-xs text-gray-500 hidden sm:inline">• {headerSubtitle}</span>
           )}
         </h3>
         {!isLoading && (
           <button
             onClick={generateReplies}
-            className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors duration-200"
+            className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors duration-200 flex-shrink-0"
             title="Refresh suggestions"
           >
             <RefreshCw className="w-4 h-4" />

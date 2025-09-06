@@ -13,6 +13,7 @@ interface ChatWindowProps {
   onSendMessage: (content: string) => void;
   chatName: string;
   chatAvatar: string;
+  onBackToChats?: () => void;
 }
 
 export const ChatWindow: React.FC<ChatWindowProps> = ({
@@ -20,6 +21,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
   onSendMessage,
   chatName,
   chatAvatar,
+  onBackToChats,
 }) => {
   const [showSummary, setShowSummary] = useState(false);
   const [showSmartReplies, setShowSmartReplies] = useState(false);
@@ -55,16 +57,16 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
 
   return (
     <div className="flex flex-col h-screen bg-background">
-      <ChatHeader chatName={chatName} chatAvatar={chatAvatar} />
+      <ChatHeader chatName={chatName} chatAvatar={chatAvatar} onBackToChats={onBackToChats} />
       
       <MessageList messages={messages} />
 
       {/* Input Container */}
-      <div className="flex-shrink-0 px-6 py-4 bg-gray-50 m-1 rounded-lg">
-        <div className="flex space-x-2 flex-shrink-0 py-2">
+      <div className="flex-shrink-0 px-4 md:px-6 py-4 bg-gray-50 m-1 rounded-lg">
+        <div className="flex space-x-2 flex-shrink-0 py-2 flex-wrap">
           <div className="flex space-x-2 overflow-x-auto scrollbar-hide pb-2">
             <button
-              className="flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors duration-200"
+              className="flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors duration-200 whitespace-nowrap"
               onClick={() => setShowSummary(true)}
             >
               <MessageSquare className="w-4 h-4 mr-2 text-white" />
@@ -74,7 +76,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
 
           <div className="flex space-x-2 overflow-x-auto scrollbar-hide pb-2 smart-replies-container">
             <button
-              className="flex items-center px-3 py-2 text-sm font-medium text-gray-800 bg-yellow-400 hover:bg-yellow-500 rounded-lg transition-colors duration-200"
+              className="flex items-center px-3 py-2 text-sm font-medium text-gray-800 bg-yellow-400 hover:bg-yellow-500 rounded-lg transition-colors duration-200 whitespace-nowrap"
               onClick={handleSmartReply}
             >
               <Star className="w-4 h-4 mr-2 text-gray-800" />

@@ -400,10 +400,10 @@ export const NewChatModal: React.FC<NewChatModalProps> = ({
       />
       
       {/* Modal */}
-      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-2xl max-w-lg w-[90%] max-h-[90vh] overflow-hidden z-50 border border-gray-200">
+      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl md:rounded-2xl shadow-2xl max-w-lg w-[95%] md:w-[90%] max-h-[95vh] md:max-h-[90vh] overflow-hidden z-50 border border-gray-200">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gray-50">
-          <h2 className="text-xl font-bold text-gray-900">New Chat</h2>
+        <div className="flex items-center justify-between px-4 md:px-6 py-3 md:py-4 border-b border-gray-200 bg-gray-50">
+          <h2 className="text-lg md:text-xl font-bold text-gray-900">New Chat</h2>
           <button
             onClick={handleClose}
             className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-200 rounded-lg transition-colors duration-200"

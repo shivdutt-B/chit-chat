@@ -2,6 +2,7 @@
 
 import type React from "react"
 import { useState } from "react"
+import { Plus } from "lucide-react"
 import type { Chat } from "../../types"
 import { NewChatModal } from "./NewChatModal"
 import { ChatListHeader } from "./ChatListHeader"
@@ -38,9 +39,9 @@ export const ChatList: React.FC<ChatListProps> = ({
   })
 
   return (
-    <div className="flex flex-col h-screen bg-sidebar">
-      {/* Header */}
-      <div className="flex-shrink-0 px-6 py-6 rounded-xl bg-[#f5f5f75d] m-1">
+    <div className="flex flex-col h-screen">
+      {/* Header - Hidden on small screens for compact mode */}
+      <div className="hidden md:block flex-shrink-0 px-4 md:px-6 py-4 md:py-6 rounded-xl bg-[#f5f5f75d] m-1">
         <ChatListHeader
           totalChats={chats.length}
           filteredChats={filteredChats.length}
@@ -55,9 +56,20 @@ export const ChatList: React.FC<ChatListProps> = ({
         />
       </div>
 
+      {/* Compact header for small screens - just new chat button */}
+      <div className="md:hidden flex-shrink-0 p-2 flex justify-center">
+        <button
+          onClick={() => setIsNewChatModalOpen(true)}
+          className="p-2 bg-green-500 hover:bg-green-600 rounded-full transition-colors duration-200"
+          title="New Chat"
+        >
+          <Plus className="w-5 h-5 text-white" />
+        </button>
+      </div>
+
       {/* Chat List */}
       <div className="flex-1 overflow-y-auto scrollbar-thin">
-        <div className="py-2 bg-[#f5f5f75d] px-1 rounded-xl m-1">
+        <div className="py-1 md:py-2 bg-[#f5f5f75d] px-0 md:px-1 rounded-xl m-0 md:m-1">
           {filteredChats.length > 0 ? (
             filteredChats.map((chat) => (
               <ChatListItem
@@ -69,7 +81,9 @@ export const ChatList: React.FC<ChatListProps> = ({
               />
             ))
           ) : (
-            <EmptyState searchQuery={searchQuery} />
+            <div className="hidden md:block">
+              <EmptyState searchQuery={searchQuery} />
+            </div>
           )}
         </div>
       </div>

@@ -72,20 +72,20 @@ export const SummaryModal: React.FC<SummaryModalProps> = ({
       />
       
       {/* Modal */}
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden border border-gray-200 animate-in fade-in-0 zoom-in-95 duration-200">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-2 md:p-4">
+        <div className="bg-white rounded-xl md:rounded-2xl shadow-2xl max-w-2xl w-full max-h-[95vh] md:max-h-[90vh] overflow-hidden border border-gray-200 animate-in fade-in-0 zoom-in-95 duration-200">
           
           {/* Modal Header */}
-          <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gray-50">
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <MessageSquare className="w-5 h-5 text-blue-600" />
+          <div className="flex items-center justify-between px-4 md:px-6 py-3 md:py-4 border-b border-gray-200 bg-gray-50">
+            <div className="flex items-center space-x-2 md:space-x-3 min-w-0 flex-1">
+              <div className="p-1.5 md:p-2 bg-blue-100 rounded-lg flex-shrink-0">
+                <MessageSquare className="w-4 h-4 md:w-5 md:h-5 text-blue-600" />
               </div>
-              <div>
-                <h3 className="text-xl font-semibold text-gray-900">
+              <div className="min-w-0 flex-1">
+                <h3 className="text-lg md:text-xl font-semibold text-gray-900 truncate">
                   Conversation Summary
                 </h3>
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-xs md:text-sm text-gray-500 mt-1 truncate">
                   AI-generated summary of your chat with {chatName}
                 </p>
               </div>
@@ -165,13 +165,12 @@ export const SummaryModal: React.FC<SummaryModalProps> = ({
           </div>
           
           {/* Modal Footer */}
-          <div className="px-6 py-4 border-t border-gray-200 bg-gray-50 flex justify-between items-center">
-            <div className="flex items-center text-xs text-gray-500">
-              {/* <span>Summary generated on {format(new Date(), 'MMM dd, yyyy')}</span> */}
+          <div className="px-6 py-4 border-t border-gray-200 bg-gray-50 flex justify-end items-center">
+            {/* <div className="flex items-center text-xs text-gray-500">
               {messages.length > 0 && (
                 <span className="ml-2">• {messages.length} messages analyzed</span>
               )}
-            </div>
+            </div> */}
             <div className="flex space-x-3">
               {!isLoading && summary && (
                 <button
@@ -192,7 +191,7 @@ export const SummaryModal: React.FC<SummaryModalProps> = ({
                   onClick={copySummary}
                 >
                   <Copy className="w-4 h-4 mr-2" />
-                  {copySuccess ? 'Copied!' : 'Copy Summary'}
+                  {copySuccess ? 'Copied!' : 'Copy'}
                 </button>
               )}
             </div>

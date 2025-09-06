@@ -101,3 +101,52 @@ body {
 .animate-bounce-subtle {
   animation: bounceSubtle 0.6s ease-in-out;
 }
+
+/* Mobile-specific improvements */
+@media (max-width: 768px) {
+  /* Prevent horizontal scroll on mobile */
+  body {
+    overflow-x: hidden;
+  }
+  
+  /* Improve touch targets on mobile */
+  button, a, input, textarea {
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Better scrolling on iOS */
+  .scrollbar-thin {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Responsive utilities */
+.safe-area-inset {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* Better focus visibility for accessibility */
+.focus-visible:focus {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+/* Smooth transitions for mobile navigation */
+.mobile-transition {
+  transition: transform 0.3s ease-in-out;
+}
+
+/* Hide scrollbars on mobile for cleaner look */
+@media (max-width: 768px) {
+  .mobile-hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .mobile-hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}

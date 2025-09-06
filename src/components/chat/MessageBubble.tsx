@@ -14,7 +14,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
       }`}
     >
       <div
-        className={`flex items-end space-x-2 max-w-xs lg:max-w-md ${
+        className={`flex items-end space-x-2 max-w-[280px] sm:max-w-xs md:max-w-sm lg:max-w-md ${
           message.isOwn ? "flex-row-reverse space-x-reverse" : ""
         }`}
       >

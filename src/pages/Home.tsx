@@ -10,11 +10,13 @@ import type { Message } from '../types';
 function ChatWindowWrapper({ 
   messages, 
   onSendMessage, 
-  chats 
+  chats,
+  onBackToChats
 }: { 
   messages: Record<string, Message[]>;
   onSendMessage: (chatId: string, content: string) => void;
   chats: typeof mockChats;
+  onBackToChats: () => void;
 }) {
   const { id } = useParams<{ id: string }>();
   const chatId = id || '';
@@ -30,6 +32,7 @@ function ChatWindowWrapper({
       onSendMessage={(content) => onSendMessage(chatId, content)}
       chatName={chat.name}
       chatAvatar={chat.avatar}
+      onBackToChats={onBackToChats}
     />
   );
 }
@@ -108,8 +111,9 @@ function Home() {
   }, [navigate, setChats, setMessages]);
 
   return (
-    <div className="grid grid-cols-[350px_1fr] min-h-screen bg-background">
-      <aside className="">
+    <div className="flex min-h-screen bg-background">
+      {/* Sidebar - Always visible: narrow on small/medium, full width on md+ */}
+      <aside className="w-20 md:w-[350px] md:min-w-[350px] flex-shrink-0 border-r border-gray-400">
         <ChatList
           chats={chats}
           activeChat={activeChat}
@@ -117,7 +121,9 @@ function Home() {
           onStartNewChat={handleStartNewChat}
         />
       </aside>
-      <main className="overflow-hidden">
+      
+      {/* Main Chat Area */}
+      <main className="flex-1 overflow-hidden">
         <Routes>
           <Route
             path="chat/:id"
@@ -126,18 +132,27 @@ function Home() {
                 messages={messages}
                 onSendMessage={handleSendMessage}
                 chats={chats}
+                onBackToChats={() => navigate('/')}
               />
             }
           />
           <Route
             path="new"
-            element={<NewChat onStartChat={handleStartNewChat} />}
+            element={<NewChat onStartChat={handleStartNewChat} onBackToChats={() => navigate('/')} />}
           />
           <Route 
             path="/" 
             element={
-              <div className="flex items-center justify-center h-full text-muted-foreground">
-                Select a chat or start a new one
+              <div className="flex items-center justify-center h-full text-muted-foreground p-4">
+                <div className="text-center">
+                  <div className="text-lg md:text-xl font-medium mb-2">
+                    Welcome to Chat
+                  </div>
+                  <div className="text-sm md:text-base">
+                    <span className="md:hidden">Tap a profile to start chatting</span>
+                    <span className="hidden md:inline">Select a chat or start a new one</span>
+                  </div>
+                </div>
               </div>
             } 
           />
