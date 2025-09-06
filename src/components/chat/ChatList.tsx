@@ -207,7 +207,7 @@ export const ChatList: React.FC<ChatListProps> = ({
               <ChatListItem
                 key={chat.id}
                 chat={chat}
-                isActive={chat.id}
+                isActive={chat.id === activeChat}
                 onClick={() => onChatSelect(chat.id)}
                 searchQuery={searchQuery}
               />

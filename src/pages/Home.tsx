@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useNavigate, useParams, Navigate, Routes, Route } from 'react-router-dom';
 import { ChatList } from '../components/chat/ChatList';
 import { ChatWindow } from '../components/chat/ChatWindow';
@@ -40,6 +40,11 @@ function Home() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const [activeChat, setActiveChat] = useState<string | undefined>(id);
+
+  // Sync activeChat with route parameter
+  useEffect(() => {
+    setActiveChat(id);
+  }, [id]);
 
   const handleChatSelect = (chatId: string) => {
     navigate(`/chat/${chatId}`);
@@ -107,7 +112,7 @@ function Home() {
       <aside className="">
         <ChatList
           chats={chats}
-          activeChat={id}
+          activeChat={activeChat}
           onChatSelect={handleChatSelect}
           onStartNewChat={handleStartNewChat}
         />
