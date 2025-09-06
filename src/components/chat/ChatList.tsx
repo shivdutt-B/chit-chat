@@ -23,21 +23,24 @@ const ChatListItem: React.FC<ChatListItemProps> = ({ chat, isActive, onClick }) 
     }
   }
 
-  // Mock unread count for demonstration
-  const unreadCount = Math.floor(Math.random() * 5)
+  // Mock unread count for demonstration - use chat.id to make it consistent
+  const unreadCount = parseInt(chat.id) % 4 // This will give consistent values (0-3) based on chat ID
   const hasUnread = unreadCount > 0
 
   return (
     <div
-      className={`m-1 border-gray-50 rounded-lg group relative flex items-center px-4 py-4 cursor-pointer transition-all duration-200 hover:bg-muted/50 ${
-        isActive ? "bg-blue-500 border-blue-700 rounded-lg text-white" : ""
+      className={`m-1 rounded-lg group relative flex items-center px-4 py-4 cursor-pointer transition-all duration-200 ${
+        isActive 
+          ? "bg-blue-500 text-white shadow-lg" 
+          : "bg-transparent hover:bg-gray-100 border-gray-50"
       }`}
       onClick={onClick}
+      style={isActive ? { backgroundColor: '#3b82f6', color: 'white' } : {}}
     >
       <div className="relative">
         <div
           className={`w-12 h-12 rounded-full overflow-hidden transition-all duration-200 ${
-            isActive ? "ring-2 ring-accent/30" : ""
+            isActive ? "ring-2 ring-white/30" : ""
           } shadow-sm`}
         >
           <img src={chat.avatar || "/placeholder.svg"} alt={chat.name} className="w-full h-full object-cover" />
@@ -57,21 +60,27 @@ const ChatListItem: React.FC<ChatListItemProps> = ({ chat, isActive, onClick }) 
         <div className="flex items-center justify-between mb-1">
           <h3
             className={`font-medium text-sm truncate transition-colors duration-200 ${
-              isActive ? "text-accent" : "text-foreground"
+              isActive ? "text-white" : "text-gray-900"
             }`}
+            style={isActive ? { color: 'white' } : {}}
           >
             {chat.name}
           </h3>
           <div className="flex items-center space-x-2 ml-2 flex-shrink-0">
             <span
               className={`text-xs transition-colors duration-200 ${
-                isActive ? "text-accent/70" : "text-muted-foreground"
+                isActive ? "text-white/90" : "text-gray-500"
               }`}
+              style={isActive ? { color: 'rgba(255, 255, 255, 0.9)' } : {}}
             >
               {formatTime(chat.timestamp)}
             </span>
             {hasUnread && (
-              <div className="w-5 h-5 bg-accent text-accent-foreground text-xs font-medium rounded-full flex items-center justify-center">
+              <div className={`w-5 h-5 text-xs font-medium rounded-full flex items-center justify-center ${
+                isActive 
+                  ? "bg-white text-blue-600" 
+                  : "bg-blue-500 text-white"
+              }`}>
                 {unreadCount}
               </div>
             )}
@@ -80,8 +89,13 @@ const ChatListItem: React.FC<ChatListItemProps> = ({ chat, isActive, onClick }) 
 
         <p
           className={`text-xs truncate leading-relaxed transition-colors duration-200 ${
-            hasUnread ? "text-foreground font-medium" : "text-muted-foreground"
+            isActive
+              ? "text-white/90 font-medium"
+              : hasUnread 
+                ? "text-gray-900 font-medium" 
+                : "text-gray-600"
           }`}
+          style={isActive ? { color: 'rgba(255, 255, 255, 0.9)' } : {}}
         >
           {chat.lastMessage}
         </p>
@@ -98,7 +112,7 @@ interface ChatListProps {
 
 export const ChatList: React.FC<ChatListProps> = ({ chats, activeChat, onChatSelect }) => {
   return (
-    <div className="flex flex-col h-screen bg-sidebar border-r border-sidebar-border">
+    <div className="flex flex-col h-screen bg-sidebar">
       {/* Header */}
       <div className="flex-shrink-0 px-6 py-6 rounded-xl bg-[#f5f5f75d] m-1">
         <div className="flex items-center justify-between mb-6">
@@ -106,8 +120,8 @@ export const ChatList: React.FC<ChatListProps> = ({ chats, activeChat, onChatSel
             <h1 className="text-2xl font-bold text-sidebar-primary-foreground font-heading">Messages</h1>
             <p className="text-sm text-muted-foreground mt-1">{chats.length} conversations</p>
           </div>
-          <button className="group p-3 text-muted-foreground hover:text-accent hover:bg-accent/10 rounded-xl transition-all duration-200">
-            <Plus className="w-5 h-5" />
+          <button className="group px-4 cursor-pointer py-2 text-muted-foreground hover:text-accent hover:bg-accent/10 rounded-xl transition-all duration-200 w-auto text-sm bg-green-500">
+            Add <Plus className="w-5 h-5 inline" />
           </button>
         </div>
 
@@ -119,7 +133,7 @@ export const ChatList: React.FC<ChatListProps> = ({ chats, activeChat, onChatSel
           <input
             type="text"
             placeholder="Search conversations..."
-            className="w-full pl-10 pr-4 py-3 text-sm bg-input border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all duration-200"
+            className="w-full pl-10 pr-4 py-3 text-sm bg-input border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:border-blue-500 transition-all duration-200"
           />
         </div>
       </div>

@@ -4,14 +4,19 @@ import { ChatList } from '../components/chat/ChatList';
 import { ChatWindow } from '../components/chat/ChatWindow';
 import { NewChat } from '../components/chat/NewChat';
 import { mockChats, mockMessages } from '../data/mockData';
+import type { Message } from '../types';
 
 // Component to handle chat window with route params
 function ChatWindowWrapper({ 
   messages, 
   onSendMessage, 
   chats 
+}: { 
+  messages: Record<string, Message[]>;
+  onSendMessage: (chatId: string, content: string) => void;
+  chats: typeof mockChats;
 }) {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const chatId = id || '';
   const chat = chats.find(c => c.id === chatId);
   
@@ -30,17 +35,17 @@ function ChatWindowWrapper({
 }
 
 function Home() {
-  const [messages, setMessages] = useState(mockMessages);
+  const [messages, setMessages] = useState<Record<string, Message[]>>(mockMessages);
   const [chats, setChats] = useState(mockChats);
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
 
-  const handleChatSelect = (chatId) => {
+  const handleChatSelect = (chatId: string) => {
     navigate(`/chat/${chatId}`);
   };
 
-  const handleSendMessage = (chatId, content) => {
-    const newMessage = {
+  const handleSendMessage = (chatId: string, content: string) => {
+    const newMessage: Message = {
       id: Date.now().toString(),
       sender: 'You',
       content,
@@ -63,7 +68,7 @@ function Home() {
     );
   };
 
-  const handleStartNewChat = (participant, initialMessage) => {
+  const handleStartNewChat = (participant: string, initialMessage?: string) => {
     const newChatId = Date.now().toString();
     const newChat = {
       id: newChatId,
@@ -77,7 +82,7 @@ function Home() {
     setChats((prev) => [newChat, ...prev]);
 
     if (initialMessage) {
-      const newMessage = {
+      const newMessage: Message = {
         id: Date.now().toString(),
         sender: 'You',
         content: initialMessage,
