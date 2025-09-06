@@ -184,13 +184,6 @@ function Home() {
                     </span>{" "}
                     for instant suggestions.
                   </p>
-
-                  {/* Call-to-action */}
-                  <div className="flex justify-center space-x-3">
-                    <button className="cursor-pointer px-5 py-2 bg-gray-200 text-gray-700 rounded-lg shadow hover:bg-gray-300 transition-colors duration-200">
-                      📂 View Chats
-                    </button>
-                  </div>
                 </div>
               </div>
             }
