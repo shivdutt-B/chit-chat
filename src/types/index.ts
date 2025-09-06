@@ -21,6 +21,7 @@ export interface IceBreaker {
   id: string
   content: string
   context: string
+  type?: string
 }
 
 export interface SmartReply {

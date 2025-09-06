@@ -2,8 +2,9 @@
 
 import type React from "react"
 import { useState } from "react"
-import { UserPlus, Zap, X, ArrowRight, ArrowLeft, Sparkles, User } from "lucide-react"
+import { UserPlus, Zap, X, ArrowRight, ArrowLeft, Sparkles, User, Loader2 } from "lucide-react"
 import { mockIceBreakers } from "../../data/mockData"
+import { generateIcebreakers } from "../../utils/icebreakerService"
 import type { IceBreaker } from "../../types"
 
 interface NewChatModalProps {
@@ -21,12 +22,18 @@ export const NewChatModal: React.FC<NewChatModalProps> = ({
   const [participant, setParticipant] = useState("")
   const [selectedMessage, setSelectedMessage] = useState("")
   const [generatedIcebreaker, setGeneratedIcebreaker] = useState("")
+  const [aiIcebreakers, setAiIcebreakers] = useState<IceBreaker[]>([])
+  const [isGenerating, setIsGenerating] = useState(false)
+  const [generateError, setGenerateError] = useState<string | null>(null)
 
   const handleClose = () => {
     setStep(1)
     setParticipant("")
     setSelectedMessage("")
     setGeneratedIcebreaker("")
+    setAiIcebreakers([])
+    setIsGenerating(false)
+    setGenerateError(null)
     onClose()
   }
 
@@ -44,17 +51,32 @@ export const NewChatModal: React.FC<NewChatModalProps> = ({
     }
   }
 
-  const handleGenerateIcebreaker = () => {
-    const aiIcebreakers = [
-      `Hey ${participant.split('@')[0] || participant}! I hope you're having a great day. I wanted to reach out and see how things are going with you! 😊`,
-      `Hi ${participant.split('@')[0] || participant}! I've been meaning to connect with you. How has your week been treating you?`,
-      `Hello ${participant.split('@')[0] || participant}! I thought of you recently and wanted to check in. What's the most exciting thing you're working on right now?`,
-      `Hey ${participant.split('@')[0] || participant}! Hope you're doing well. I'd love to catch up and hear what's new in your world! ✨`,
-      `Hi ${participant.split('@')[0] || participant}! I was just thinking about our team and wanted to reach out. How are you finding everything lately?`
-    ]
-    const randomIcebreaker = aiIcebreakers[Math.floor(Math.random() * aiIcebreakers.length)]
-    setGeneratedIcebreaker(randomIcebreaker)
-    setSelectedMessage(randomIcebreaker)
+  const handleGenerateIcebreaker = async () => {
+    if (!participant.trim()) return
+    
+    setIsGenerating(true)
+    setGenerateError(null)
+    
+    try {
+      const icebreakers = await generateIcebreakers(participant.trim())
+      setAiIcebreakers(icebreakers)
+      
+      // Set the first icebreaker as the generated one to display prominently
+      if (icebreakers.length > 0) {
+        setGeneratedIcebreaker(icebreakers[0].content)
+        setSelectedMessage(icebreakers[0].content)
+      }
+    } catch (error) {
+      console.error('Failed to generate icebreakers:', error)
+      setGenerateError('Failed to generate AI icebreakers. Please try again.')
+      
+      // Fallback to a simple personalized message
+      const fallbackMessage = `Hey ${participant.split('@')[0] || participant}! I hope you're having a great day. I wanted to reach out and see how things are going with you! 😊`
+      setGeneratedIcebreaker(fallbackMessage)
+      setSelectedMessage(fallbackMessage)
+    } finally {
+      setIsGenerating(false)
+    }
   }
 
   const handleStartChat = () => {
@@ -165,15 +187,82 @@ export const NewChatModal: React.FC<NewChatModalProps> = ({
 
       {/* AI Generate Button */}
       <button
-        className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600 transition-all duration-200 shadow-sm"
+        className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium transition-all duration-200 shadow-sm ${
+          isGenerating 
+            ? 'bg-gray-400 cursor-not-allowed' 
+            : 'bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600'
+        }`}
         onClick={handleGenerateIcebreaker}
+        disabled={isGenerating}
       >
-        <Zap className="w-4 h-4" />
-        Generate AI Ice Breaker
+        {isGenerating ? (
+          <>
+            <Loader2 className="w-4 h-4 animate-spin" />
+            Generating AI Icebreakers...
+          </>
+        ) : (
+          <>
+            <Zap className="w-4 h-4" />
+            Generate AI Ice Breakers
+          </>
+        )}
       </button>
 
-      {/* Generated Ice Breaker */}
-      {generatedIcebreaker && (
+      {/* Error Message */}
+      {generateError && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+          <p className="text-red-600 text-sm">{generateError}</p>
+          <button 
+            className="mt-2 text-red-600 hover:text-red-700 text-sm font-medium"
+            onClick={handleGenerateIcebreaker}
+          >
+            Try Again
+          </button>
+        </div>
+      )}
+
+      {/* Generated Ice Breakers */}
+      {aiIcebreakers.length > 0 && (
+        <div className="space-y-3">
+          <h4 className="text-sm font-medium text-purple-700 flex items-center gap-2">
+            <Sparkles className="w-4 h-4" />
+            AI-Generated Icebreakers
+          </h4>
+          <div className="space-y-2">
+            {aiIcebreakers.map((icebreaker) => (
+              <div key={icebreaker.id} className="bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-lg p-4">
+                <div className="flex items-start gap-3">
+                  <div className="p-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex-shrink-0">
+                    <Sparkles className="w-3 h-3 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm text-gray-700 leading-relaxed mb-3">"{icebreaker.content}"</p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-purple-600 bg-purple-100 px-2 py-1 rounded-full">
+                        {icebreaker.type}
+                      </span>
+                      <button
+                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                          selectedMessage === icebreaker.content
+                            ? 'bg-purple-500 text-white'
+                            : 'bg-white text-purple-600 hover:bg-purple-50 border border-purple-300'
+                        }`}
+                        onClick={() => setSelectedMessage(icebreaker.content)}
+                      >
+                        {selectedMessage === icebreaker.content ? 'Selected ✓' : 'Use This'}
+                      </button>
+                    </div>
+                    <p className="text-xs text-gray-500 mt-2">{icebreaker.context}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Legacy Generated Ice Breaker (for fallback) */}
+      {generatedIcebreaker && aiIcebreakers.length === 0 && (
         <div className="bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-lg p-4">
           <div className="flex items-start gap-3">
             <div className="p-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex-shrink-0">

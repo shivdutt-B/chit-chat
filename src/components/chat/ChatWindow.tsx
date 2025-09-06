@@ -1,12 +1,10 @@
-"use client";
-
 import type React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { MessageSquare, Star } from "lucide-react";
 import type { Message} from "../../types";
 import { ChatHeader } from "./ChatHeader";
 import { MessageList } from "./MessageList";
-import { MessageInput } from "./MessageInput";
+import { MessageInput, type MessageInputRef } from "./MessageInput";
 import { SmartRepliesDropdown } from "./SmartRepliesDropdown";
 import { SummaryModal } from "./SummaryModal";
 
@@ -25,6 +23,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
 }) => {
   const [showSummary, setShowSummary] = useState(false);
   const [showSmartReplies, setShowSmartReplies] = useState(false);
+  const messageInputRef = useRef<MessageInputRef>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -47,7 +46,10 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
   };
 
   const selectSmartReply = (reply: string) => {
-    onSendMessage(reply);
+    // Inject the reply into the input field instead of sending directly
+    if (messageInputRef.current) {
+      messageInputRef.current.setMessage(reply);
+    }
     setShowSmartReplies(false);
   };
 
@@ -81,11 +83,13 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
           </div>
         </div>
 
-        <MessageInput onSendMessage={onSendMessage} />
+        <MessageInput ref={messageInputRef} onSendMessage={onSendMessage} />
       </div>
 
       <SmartRepliesDropdown
         isVisible={showSmartReplies}
+        messages={messages}
+        chatName={chatName}
         onSelectReply={selectSmartReply}
       />
 

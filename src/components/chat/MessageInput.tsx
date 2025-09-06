@@ -1,12 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useImperativeHandle, forwardRef } from 'react';
 import { Send, Smile } from 'lucide-react';
 
 interface MessageInputProps {
   onSendMessage: (content: string) => void;
 }
 
-export const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage }) => {
+export interface MessageInputRef {
+  setMessage: (message: string) => void;
+  getMessage: () => string;
+}
+
+export const MessageInput = forwardRef<MessageInputRef, MessageInputProps>(({ onSendMessage }, ref) => {
   const [newMessage, setNewMessage] = useState("");
+
+  useImperativeHandle(ref, () => ({
+    setMessage: (message: string) => {
+      setNewMessage(message);
+    },
+    getMessage: () => newMessage
+  }));
 
   const handleSend = () => {
     if (newMessage.trim()) {
@@ -51,4 +63,6 @@ export const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage }) => 
       </button>
     </div>
   );
-};
+});
+
+MessageInput.displayName = 'MessageInput';
