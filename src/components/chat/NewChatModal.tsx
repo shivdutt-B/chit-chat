@@ -133,7 +133,7 @@ export const NewChatModal: React.FC<NewChatModalProps> = ({
           <input
             type="text"
             className="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 bg-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-gray-400"
-            placeholder="e.g. John Doe or john@example.com"
+            placeholder="e.g. nobita_07 or nobitanobi@example.com"
             value={participant}
             onChange={(e) => setParticipant(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && participant.trim() && handleNextStep()}
