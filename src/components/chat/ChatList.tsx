@@ -121,8 +121,6 @@ export const ChatList: React.FC<ChatListProps> = ({
 }) => {
   const [isNewChatModalOpen, setIsNewChatModalOpen] = useState(false)
 
-  console.log('ChatList props:', { onStartNewChat: typeof onStartNewChat })
-
   return (
     <div className="flex flex-col h-screen bg-sidebar">
       {/* Header */}

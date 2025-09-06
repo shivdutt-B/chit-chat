@@ -58,11 +58,6 @@ export const NewChatModal: React.FC<NewChatModalProps> = ({
   }
 
   const handleStartChat = () => {
-    console.log('handleStartChat called')
-    console.log('onStartChat:', onStartChat)
-    console.log('participant:', participant)
-    console.log('selectedMessage:', selectedMessage)
-    
     if (participant.trim()) {
       if (typeof onStartChat === 'function') {
         onStartChat(participant.trim(), selectedMessage.trim() || undefined)

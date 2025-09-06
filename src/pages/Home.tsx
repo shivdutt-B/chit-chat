@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useNavigate, useParams, Navigate, Routes, Route } from 'react-router-dom';
 import { ChatList } from '../components/chat/ChatList';
 import { ChatWindow } from '../components/chat/ChatWindow';
@@ -68,8 +68,7 @@ function Home() {
     );
   };
 
-  const handleStartNewChat = (participant: string, initialMessage?: string) => {
-    console.log("handleStartNewChat called with:", participant, initialMessage)
+  const handleStartNewChat = useCallback((participant: string, initialMessage?: string) => {
     const newChatId = Date.now().toString();
     const newChat = {
       id: newChatId,
@@ -98,9 +97,12 @@ function Home() {
     }
 
     navigate(`/chat/${newChatId}`);
-  };
+  }, [navigate, setChats, setMessages]);
 
-  console.log("Home component handleStartNewChat:", typeof handleStartNewChat)
+  const testFunction = useCallback((participant: string, message?: string) => {
+    console.log('TEST FUNCTION CALLED:', participant, message);
+    alert(`Test function called with: ${participant}, ${message || 'no message'}`);
+  }, []);
 
   return (
     <div className="grid grid-cols-[350px_1fr] min-h-screen bg-background">
@@ -109,7 +111,7 @@ function Home() {
           chats={chats}
           activeChat={id}
           onChatSelect={handleChatSelect}
-          onStartNewChat={handleStartNewChat}
+          onStartNewChat={testFunction}
         />
       </aside>
       <main className="overflow-hidden">
