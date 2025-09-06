@@ -130,6 +130,25 @@ export const NewChatModal: React.FC<NewChatModalProps> = ({
           Next: Choose Ice Breaker
           <ArrowRight className="w-4 h-4" />
         </button>
+        
+        {/* Skip Ice Breaker Button */}
+        <button
+          className={`w-full flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-medium transition-all duration-200 border ${
+            participant.trim()
+              ? "border-gray-300 text-gray-700 hover:bg-gray-50"
+              : "border-gray-200 text-gray-400 cursor-not-allowed"
+          }`}
+          onClick={() => {
+            if (participant.trim()) {
+              onStartChat(participant.trim())
+              handleClose()
+            }
+          }}
+          disabled={!participant.trim()}
+        >
+          <UserPlus className="w-4 h-4" />
+          Start Chat Now
+        </button>
       </div>
     </div>
   )
@@ -218,6 +237,20 @@ export const NewChatModal: React.FC<NewChatModalProps> = ({
         >
           Next: Start Chat
           <ArrowRight className="w-4 h-4" />
+        </button>
+      </div>
+      
+      {/* Skip Ice Breaker Option */}
+      <div className="pt-4 border-t border-gray-200">
+        <button
+          className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium transition-all duration-200 border border-gray-300 text-gray-700 hover:bg-gray-50"
+          onClick={() => {
+            onStartChat(participant.trim())
+            handleClose()
+          }}
+        >
+          <UserPlus className="w-4 h-4" />
+          Skip Ice Breaker & Start Chat
         </button>
       </div>
     </div>

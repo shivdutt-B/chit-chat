@@ -94,15 +94,15 @@ const ChatListItem: React.FC<ChatListItemProps> = ({ chat, isActive, onClick, se
             >
               {formatTime(chat.timestamp)}
             </span>
-            {hasUnread && (
-              <div className={`w-5 h-5 text-xs font-medium rounded-full flex items-center justify-center ${
-                isActive 
-                  ? "bg-white text-blue-600" 
-                  : "bg-blue-500 text-white"
-              }`}>
-                {unreadCount}
-              </div>
-            )}
+              {hasUnread && (
+                <div className={`w-5 h-5 text-xs font-medium rounded-full flex items-center justify-center ${
+                  isActive 
+                    ? "bg-white text-blue-600" 
+                    : "bg-blue-500 text-white"
+                }`}>
+                  {unreadCount}
+                </div>
+              )}
           </div>
         </div>
 
