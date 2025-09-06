@@ -39,9 +39,12 @@ function Home() {
   const [chats, setChats] = useState(mockChats);
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
+  const [activeChat, setActiveChat] = useState<string | undefined>(id);
 
   const handleChatSelect = (chatId: string) => {
     navigate(`/chat/${chatId}`);
+    console.log("Selected chat ID:", chatId);
+    setActiveChat(chatId);
   };
 
   const handleSendMessage = (chatId: string, content: string) => {
@@ -99,11 +102,6 @@ function Home() {
     navigate(`/chat/${newChatId}`);
   }, [navigate, setChats, setMessages]);
 
-  const testFunction = useCallback((participant: string, message?: string) => {
-    console.log('TEST FUNCTION CALLED:', participant, message);
-    alert(`Test function called with: ${participant}, ${message || 'no message'}`);
-  }, []);
-
   return (
     <div className="grid grid-cols-[350px_1fr] min-h-screen bg-background">
       <aside className="">
@@ -111,7 +109,7 @@ function Home() {
           chats={chats}
           activeChat={id}
           onChatSelect={handleChatSelect}
-          onStartNewChat={testFunction}
+          onStartNewChat={handleStartNewChat}
         />
       </aside>
       <main className="overflow-hidden">

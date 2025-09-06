@@ -3,7 +3,7 @@
 import type React from "react"
 import { useState } from "react"
 import { format, isToday, isYesterday } from "date-fns"
-import { Search, Plus, Users } from "lucide-react"
+import { Search, Plus, Users, X } from "lucide-react"
 import type { Chat } from "../../types"
 import { NewChatModal } from "./NewChatModal"
 
@@ -11,9 +11,10 @@ interface ChatListItemProps {
   chat: Chat
   isActive?: boolean
   onClick: () => void
+  searchQuery?: string
 }
 
-const ChatListItem: React.FC<ChatListItemProps> = ({ chat, isActive, onClick }) => {
+const ChatListItem: React.FC<ChatListItemProps> = ({ chat, isActive, onClick, searchQuery }) => {
   const formatTime = (timestamp: string) => {
     const date = new Date(timestamp)
     if (isToday(date)) {
@@ -23,6 +24,22 @@ const ChatListItem: React.FC<ChatListItemProps> = ({ chat, isActive, onClick }) 
     } else {
       return format(date, "MMM d")
     }
+  }
+
+  // Function to highlight search terms
+  const highlightText = (text: string, query: string) => {
+    if (!query) return text
+    
+    const regex = new RegExp(`(${query})`, 'gi')
+    const parts = text.split(regex)
+    
+    return parts.map((part, index) => 
+      regex.test(part) ? (
+        <span key={index} className="bg-yellow-200 text-gray-900 font-medium rounded px-0.5">
+          {part}
+        </span>
+      ) : part
+    )
   }
 
   // Mock unread count for demonstration - use chat.id to make it consistent
@@ -37,7 +54,7 @@ const ChatListItem: React.FC<ChatListItemProps> = ({ chat, isActive, onClick }) 
           : "bg-transparent hover:bg-gray-100 border-gray-50"
       }`}
       onClick={onClick}
-      style={isActive ? { backgroundColor: '#3b82f6', color: 'white' } : {}}
+    //   style={isActive ? { backgroundColor: '#3b82f6', color: 'white' } : {}}
     >
       <div className="relative">
         <div
@@ -66,7 +83,7 @@ const ChatListItem: React.FC<ChatListItemProps> = ({ chat, isActive, onClick }) 
             }`}
             style={isActive ? { color: 'white' } : {}}
           >
-            {chat.name}
+            {highlightText(chat.name, searchQuery || '')}
           </h3>
           <div className="flex items-center space-x-2 ml-2 flex-shrink-0">
             <span
@@ -99,7 +116,7 @@ const ChatListItem: React.FC<ChatListItemProps> = ({ chat, isActive, onClick }) 
           }`}
           style={isActive ? { color: 'rgba(255, 255, 255, 0.9)' } : {}}
         >
-          {chat.lastMessage}
+          {highlightText(chat.lastMessage, searchQuery || '')}
         </p>
       </div>
     </div>
@@ -120,6 +137,19 @@ export const ChatList: React.FC<ChatListProps> = ({
   onStartNewChat 
 }) => {
   const [isNewChatModalOpen, setIsNewChatModalOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("")
+
+  // Filter chats based on search query
+  const filteredChats = chats.filter(chat => {
+    const query = searchQuery.toLowerCase()
+    return (
+      chat.name.toLowerCase().includes(query) ||
+      chat.lastMessage.toLowerCase().includes(query) ||
+      (chat.participants && chat.participants.some(participant => 
+        participant.toLowerCase().includes(query)
+      ))
+    )
+  })
 
   return (
     <div className="flex flex-col h-screen bg-sidebar">
@@ -128,7 +158,9 @@ export const ChatList: React.FC<ChatListProps> = ({
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-2xl font-bold text-sidebar-primary-foreground font-heading">Messages</h1>
-            <p className="text-sm text-muted-foreground mt-1">{chats.length} conversations</p>
+            <p className="text-sm text-muted-foreground mt-1">
+              {searchQuery ? `${filteredChats.length} of ${chats.length}` : chats.length} conversations
+            </p>
           </div>
           <button 
             onClick={() => setIsNewChatModalOpen(true)}
@@ -147,22 +179,48 @@ export const ChatList: React.FC<ChatListProps> = ({
           <input
             type="text"
             placeholder="Search conversations..."
-            className="w-full pl-10 pr-4 py-3 text-sm bg-input border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:border-blue-500 transition-all duration-200"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') {
+                setSearchQuery('')
+              }
+            }}
+            className="w-full pl-10 pr-10 py-3 text-sm bg-input border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:border-blue-500 transition-all duration-200"
           />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery('')}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 hover:bg-gray-200 rounded-full transition-colors duration-200"
+            >
+              <X className="w-3 h-3 text-gray-500" />
+            </button>
+          )}
         </div>
       </div>
 
       {/* Chat List */}
       <div className="flex-1 overflow-y-auto scrollbar-thin">
         <div className="py-2 bg-[#f5f5f75d] px-1 rounded-xl m-1">
-          {chats.map((chat) => (
-            <ChatListItem
-              key={chat.id}
-              chat={chat}
-              isActive={chat.id === activeChat}
-              onClick={() => onChatSelect(chat.id)}
-            />
-          ))}
+          {filteredChats.length > 0 ? (
+            filteredChats.map((chat) => (
+              <ChatListItem
+                key={chat.id}
+                chat={chat}
+                isActive={chat.id}
+                onClick={() => onChatSelect(chat.id)}
+                searchQuery={searchQuery}
+              />
+            ))
+          ) : (
+            <div className="flex flex-col items-center justify-center py-8 text-center">
+              <Search className="w-12 h-12 text-gray-300 mb-3" />
+              <p className="text-sm text-gray-500 font-medium">No conversations found</p>
+              <p className="text-xs text-gray-400 mt-1">
+                {searchQuery ? 'Try a different search term' : 'Start a new conversation'}
+              </p>
+            </div>
+          )}
         </div>
       </div>
 
