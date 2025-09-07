@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { MessageSquare, X, Loader2, Copy, RefreshCw } from 'lucide-react';
@@ -23,34 +23,45 @@ export const SummaryModal: React.FC<SummaryModalProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [copySuccess, setCopySuccess] = useState<boolean>(false);
 
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const isMountedRef = useRef(true);
+
   useEffect(() => {
+    isMountedRef.current = true;
     if (isVisible && messages.length > 0) {
       generateSummary();
     }
+    return () => {
+      isMountedRef.current = false;
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
   }, [isVisible, messages, chatName]);
 
   const generateSummary = async () => {
     if (messages.length === 0) {
-      setSummary('No messages to summarize.');
+      setSummary("No messages to summarize.");
       return;
     }
 
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const generatedSummary = await generateConversationSummary(messages, chatName);
-      setTimeout(() => {
-        // safe update state after delay.
-        setSummary(generatedSummary);
-      }, 1500);
-    } catch (err) {
-      setError('Failed to generate summary. Please try again.');
-      setSummary('');
-    } finally {
+
+      setSummary(generatedSummary);
       setIsLoading(false);
+    } catch (err) {
+      if (isMountedRef.current && isVisible) {
+        setError("Failed to generate summary. Please try again.");
+        setSummary("");
+        setIsLoading(false);
+      }
     }
   };
+
 
   const copySummary = async () => {
     if (summary) {

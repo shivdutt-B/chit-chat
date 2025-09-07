@@ -48,6 +48,7 @@ Provide a well-structured markdown summary that helps understand the key points,
     const generatedSummary = response.data.candidates[0].content.parts[0].text.trim();
     
     // Check for placeholder text in the summary
+    // (No longer throwing error, just log a warning)
     const hasPlaceholders = /\[.*?\]/.test(generatedSummary) || 
                           generatedSummary.includes('[') || 
                           generatedSummary.includes(']') ||
@@ -56,12 +57,9 @@ Provide a well-structured markdown summary that helps understand the key points,
                           generatedSummary.includes('specific information') ||
                           generatedSummary.includes('details here') ||
                           generatedSummary.includes('key points');
-    
     if (hasPlaceholders) {
-      console.warn('Generated summary contains placeholder text, using fallback');
-      throw new Error('Summary contains placeholder text');
+      console.warn('Generated summary contains placeholder text');
     }
-
     return generatedSummary;
   } catch (error) {
     console.error('Error generating conversation summary:', error);
