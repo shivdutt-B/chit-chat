@@ -40,7 +40,10 @@ export const SummaryModal: React.FC<SummaryModalProps> = ({
     
     try {
       const generatedSummary = await generateConversationSummary(messages, chatName);
-      setSummary(generatedSummary);
+      setTimeout(() => {
+        // safe update state after delay.
+        setSummary(generatedSummary);
+      }, 1500);
     } catch (err) {
       setError('Failed to generate summary. Please try again.');
       setSummary('');
